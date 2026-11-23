@@ -1,11 +1,12 @@
 /* Graphique « Évolution des points » – SVG sans librairie.
    Couleurs : palette catégorielle validée (clair / sombre), attribuée
    au joueur au moment où on le sélectionne et conservée ensuite. */
-function renderPointsChart(containerId){
+function renderPointsChart(containerId,initialIds,lockedIds){
+  var locked=lockedIds||[];
   var root=document.getElementById(containerId);
   if(!root)return;
   var MAX=5,SVGNS="http://www.w3.org/2000/svg";
-  var selected=PLAYERS.slice(0,MAX).map(function(p){return p.id});
+  var selected=(initialIds&&initialIds.length?initialIds:PLAYERS.slice(0,MAX).map(function(p){return p.id})).slice(0,MAX);
   var slotOf={};selected.forEach(function(id,i){slotOf[id]=i+1});
   var lines={};PLAYERS.forEach(function(p){lines[p.id]=pointsTimeline(p)});
 
@@ -26,14 +27,16 @@ function renderPointsChart(containerId){
   function renderChips(){
     var full=selected.length>=MAX;
     chips.innerHTML=PLAYERS.map(function(p){
-      var on=selected.indexOf(p.id)!==-1;
-      return '<button type="button" class="chip'+(on?' is-on':'')+'" data-id="'+p.id+'" aria-pressed="'+on+'"'+(!on&&full?' disabled title="5 joueurs maximum"':'')+
+      var on=selected.indexOf(p.id)!==-1,lock=locked.indexOf(p.id)!==-1;
+      return '<button type="button" class="chip'+(on?' is-on':'')+(lock?' is-locked':'')+'" data-id="'+p.id+'" aria-pressed="'+on+'"'+
+        (lock?' aria-disabled="true" title="Joueur de la fiche, toujours affiché"':(!on&&full?' disabled title="5 joueurs maximum"':''))+
         (on?' style="--c:var(--series-'+slotOf[p.id]+')"':'')+'><span class="sw" aria-hidden="true"></span>'+escHtml(p.name)+'</button>';
     }).join("");
   }
   chips.addEventListener("click",function(e){
     var b=e.target.closest(".chip");if(!b||b.disabled)return;
     var id=b.getAttribute("data-id"),i=selected.indexOf(id);
+    if(locked.indexOf(id)!==-1)return;
     if(i!==-1){if(selected.length===1)return;selected.splice(i,1)}
     else{slotOf[id]=freeSlot();selected.push(id)}
     renderChips();draw();

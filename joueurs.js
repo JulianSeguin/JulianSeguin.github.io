@@ -143,9 +143,12 @@ function pointsTimeline(player){
   return line;
 }
 
-/* Classement d'une statistique (tri décroissant, rang partagé en cas d'égalité) */
+/* Classement d'une statistique (tri décroissant, rang partagé en cas d'égalité).
+   Seuls les joueurs ayant disputé au moins MIN_GAMES_STATS parties y figurent. */
+var MIN_GAMES_STATS=3;
+function statEligible(p){return p.games>=MIN_GAMES_STATS}
 function statRanking(field){
-  var list=PLAYERS.slice().sort(function(a,b){return b[field]-a[field]||a.rank-b.rank});
+  var list=PLAYERS.filter(statEligible).sort(function(a,b){return b[field]-a[field]||a.rank-b.rank});
   var out=[];
   list.forEach(function(p,i){
     var rank=(i>0&&list[i-1][field]===p[field])?out[i-1].rank:i+1;

@@ -7,9 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
-<script src="theme.js"></script>
-<link rel="stylesheet" href="site.css">
-<link rel="stylesheet" href="Joueur.css">
+<script src="theme.js?v=3"></script>
+<link rel="stylesheet" href="site.css?v=3">
+<link rel="stylesheet" href="Joueur.css?v=3">
+<link rel="stylesheet" href="chart.css?v=4">
 
 </head>
 <body>
@@ -50,7 +51,8 @@
     </div>
   </div>
 </footer>
-<script src="joueurs.js"></script>
+<script src="joueurs.js?v=3"></script>
+<script src="chart.js?v=4"></script>
 <script>
 var profile=document.getElementById("profile");
 profile.innerHTML='<p class="data-source">Chargement du profil…</p>';
@@ -63,6 +65,7 @@ if(!player){
   return;
 }
 var rank=player.rank;
+function rankLabel(field){var r=statRank(field,player.id);return r?"#"+r+" au classement":"Classé dès "+MIN_GAMES_STATS+" parties"}
 var winRate=fmt(player.winRate*100,1);
 document.title="Profil de "+player.name+" – League of Legends";
 
@@ -92,10 +95,10 @@ profile.innerHTML=
   '<div class="profile-stat is-loss"><strong>'+player.losses+'</strong><span>Défaites</span></div>'+
   '<div class="profile-stat"><strong>'+winRate+' %</strong><span>Winrate</span></div>'+
   '</div><h2 class="profile-section-title">Combat</h2><div class="profile-stats profile-combat">'+
-  '<div class="profile-stat"><strong>'+player.kills+'</strong><span>Kills</span><small>#'+statRank("kills",player.id)+' au classement</small></div>'+
-  '<div class="profile-stat"><strong>'+player.deaths+'</strong><span>Morts</span><small>#'+statRank("deaths",player.id)+' au classement</small></div>'+
-  '<div class="profile-stat"><strong>'+player.assists+'</strong><span>Assists</span><small>#'+statRank("assists",player.id)+' au classement</small></div>'+
-  '<div class="profile-stat"><strong>'+fmt(player.kda)+'</strong><span>KDA</span><small>#'+statRank("kda",player.id)+' au classement</small></div>'+
+  '<div class="profile-stat"><strong>'+player.kills+'</strong><span>Kills</span><small>'+rankLabel("kills")+'</small></div>'+
+  '<div class="profile-stat"><strong>'+player.deaths+'</strong><span>Morts</span><small>'+rankLabel("deaths")+'</small></div>'+
+  '<div class="profile-stat"><strong>'+player.assists+'</strong><span>Assists</span><small>'+rankLabel("assists")+'</small></div>'+
+  '<div class="profile-stat"><strong>'+fmt(player.kda)+'</strong><span>KDA</span><small>'+rankLabel("kda")+'</small></div>'+
   '</div>'+
   '<h2 class="profile-section-title">Forme</h2><div class="profile-highlights">'+
   '<div class="hl"><span class="hl-label">5 dernières parties</span><div class="form-row">'+form+'</div></div>'+
@@ -103,10 +106,13 @@ profile.innerHTML=
   '<div class="hl"><span class="hl-label">Record de victoires d’affilée</span><strong>'+player.bestWinStreak+'</strong></div>'+
   (bg?'<div class="hl"><span class="hl-label">Meilleure partie</span><strong>'+bg.kills+' / '+bg.deaths+' / '+bg.assists+'</strong><small>Partie '+bg.game+' · KDA '+fmt(bg.kda)+'</small></div>':'')+
   '</div>'+
+  '<section class="chart-card" aria-labelledby="chart-title"><div class="chart-head"><h2 id="chart-title">Évolution des points</h2>'+
+  '<p>Points cumulés de '+esc(player.name)+' après chaque partie. Ajoute jusqu’à 4 joueurs pour comparer.</p></div><div id="points-chart"></div></section>'+
   '<h2 class="profile-section-title">Historique des parties</h2>'+
   '<div class="history-wrap"><table class="history"><thead><tr><th scope="col">Partie</th><th scope="col">Résultat</th><th scope="col">K / D / A</th><th scope="col" class="num">KDA</th><th scope="col" class="mates">Coéquipiers</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
   '<p class="data-source"></p>'+
   '<a class="profile-back" href="Profils.html">← Retour aux profils</a>';
+renderPointsChart("points-chart",[player.id],[player.id]);
 showDataSource();
 });
 </script>
