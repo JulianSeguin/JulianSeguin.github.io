@@ -78,7 +78,9 @@ loadTournament().then(function(){
       '</header><div class="match-teams">'+teamTable(m.A,"Équipe A",m.winner==="A",m)+teamTable(m.B,"Équipe B",m.winner==="B",m)+'</div></article>';
   }).join("");
   showDataSource();
-  if(location.hash){var t=document.querySelector(location.hash);if(t){t.scrollIntoView();t.classList.add("is-target")}}
+  // Seules les ancres « #partie-<numéro> » sont acceptées (pas de sélecteur CSS libre venant de l'URL)
+  var anchor=/^#partie-(\d{1,4})$/.exec(location.hash);
+  if(anchor){var t=document.getElementById("partie-"+anchor[1]);if(t){t.scrollIntoView();t.classList.add("is-target")}}
 });
 </script>
 </body>
