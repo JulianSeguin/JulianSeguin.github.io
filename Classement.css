@@ -99,3 +99,51 @@ a.ranking-name:hover{color:var(--goldi);text-decoration:underline;text-underline
 }
 .col-kda{width:64px;color:var(--mu);font-size:.95rem!important}
 @media(max-width:560px){.col-kda{display:none}}
+
+/* ---------- Graphique d'évolution ---------- */
+.stats-board{
+  --series-1:#2a78d6;--series-2:#eb6834;--series-3:#1baf7a;--series-4:#eda100;--series-5:#e87ba4
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stats-board{
+  --series-1:#3987e5;--series-2:#d95926;--series-3:#199e70;--series-4:#c98500;--series-5:#d55181
+}}
+:root[data-theme="dark"] .stats-board{
+  --series-1:#3987e5;--series-2:#d95926;--series-3:#199e70;--series-4:#c98500;--series-5:#d55181
+}
+.chart-card{margin:0 0 24px;padding:16px;border:1px solid var(--bd);border-radius:var(--radius);background:var(--card)}
+.chart-head h2{font-size:1.15rem;text-transform:uppercase}
+.chart-head p{margin:4px 0 12px;color:var(--mu);font-size:.9rem}
+.chart-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:5px 11px;
+  border:1px solid var(--bd);border-radius:999px;background:transparent;color:var(--mu);
+  font:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:border-color .15s,color .15s,background-color .15s
+}
+.chip .sw{width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor;opacity:.5}
+.chip.is-on{color:var(--tx);border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,transparent)}
+.chip.is-on .sw{background:var(--c);border-color:var(--c);opacity:1}
+.chip:not(:disabled):hover{border-color:var(--gold);color:var(--tx)}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.chart-plot{position:relative}
+.chart-svg{display:block;width:100%;overflow:visible;touch-action:pan-y}
+.chart-svg .grid line{stroke:var(--bd);stroke-width:1}
+.chart-svg .grid line.baseline{stroke:var(--bd-strong)}
+.chart-svg .tick{fill:var(--mu);font-size:11px;font-weight:600;font-family:var(--font)}
+.chart-svg .end-label{fill:var(--tx);font-size:12px;font-weight:700;font-family:var(--font)}
+.chart-svg .crosshair{stroke:var(--mu);stroke-width:1;stroke-dasharray:3 3;pointer-events:none}
+.chart-svg .hit{cursor:crosshair}
+.chart-tip{
+  position:absolute;top:8px;z-index:3;min-width:150px;padding:10px 12px;pointer-events:none;
+  background:var(--card);border:1px solid var(--bd-strong);border-radius:var(--radius-sm);box-shadow:var(--shadow);font-size:.85rem
+}
+.chart-tip strong{display:block;margin-bottom:6px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
+.tip-row{display:flex;align-items:center;gap:8px;padding:2px 0;font-weight:600}
+.tip-row i{flex:none;width:10px;height:10px;border-radius:50%}
+.tip-row b{margin-left:auto;padding-left:12px;font-variant-numeric:tabular-nums}
+.chart-table{margin-top:10px}
+.chart-table summary{cursor:pointer;color:var(--goldi);font-size:.85rem;font-weight:700;padding:6px 0}
+.chart-table-wrap{overflow-x:auto}
+.chart-table table{border-collapse:collapse;font-size:.85rem;font-variant-numeric:tabular-nums}
+.chart-table th,.chart-table td{padding:6px 10px;border-bottom:1px solid var(--bd);text-align:right;white-space:nowrap}
+.chart-table th[scope="row"],.chart-table thead th:first-child{text-align:left}
+.chart-table thead th{color:var(--mu);font-size:.72rem;letter-spacing:.08em}
