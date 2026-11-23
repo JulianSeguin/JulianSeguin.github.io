@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Russo+One&display=swap" rel="stylesheet">
 <script src="theme.js?v=3"></script>
 <link rel="stylesheet" href="site.css?v=3">
-<link rel="stylesheet" href="Joueur.css?v=3">
+<link rel="stylesheet" href="Joueur.css?v=4">
 <link rel="stylesheet" href="chart.css?v=4">
 
 </head>
@@ -83,6 +83,8 @@ var rows=player.history.slice().reverse().map(function(g){
 }).join("");
 var form=player.history.slice(-5).map(function(g){return '<span class="form-dot '+(g.win?'w':'l')+'" title="Partie '+g.game+' : '+(g.win?'victoire':'défaite')+'">'+(g.win?'V':'D')+'</span>'}).join("");
 var bg=player.bestGame;
+var mvpGames=player.history.filter(function(g){return g.isMvp}).map(function(g){return g.game});
+var mvpDetail=mvpGames.length?(mvpGames.length>1?'Parties ':'Partie ')+mvpGames.join(', '):'Pas encore MVP';
 var streakLabel=player.streak.count+' '+(player.streak.type==="V"?'victoire':'défaite')+(player.streak.count>1?'s':'');
 
 profile.innerHTML=
@@ -101,6 +103,7 @@ profile.innerHTML=
   '<div class="profile-stat"><strong>'+fmt(player.kda)+'</strong><span>KDA</span><small>'+rankLabel("kda")+'</small></div>'+
   '</div>'+
   '<h2 class="profile-section-title">Forme</h2><div class="profile-highlights">'+
+  '<div class="hl is-mvp" title="MVP : joueur de l’équipe gagnante avec le meilleur KDA de la partie"><span class="hl-label">MVP</span><strong>'+mvpGames.length+'<small class="unit"> fois</small></strong><small>'+mvpDetail+'</small></div>'+
   '<div class="hl"><span class="hl-label">5 dernières parties</span><div class="form-row">'+form+'</div></div>'+
   '<div class="hl"><span class="hl-label">Série en cours</span><strong class="'+(player.streak.type==="V"?'c-win':'c-loss')+'">'+streakLabel+'</strong></div>'+
   '<div class="hl"><span class="hl-label">Record de victoires d’affilée</span><strong>'+player.bestWinStreak+'</strong></div>'+
