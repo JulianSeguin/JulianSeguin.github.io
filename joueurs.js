@@ -37,7 +37,7 @@ var LOCAL_MATCHES="\
 11|Ethan|B|D|2|3|0;11|Cyrille|B|D|2|7|2;11|Smolder|B|D|1|7|1;11|Clement|B|D|1|7|0;11|Lilian|B|D|0|5|3;\
 12|Charles|A|V|13|4|5;12|Ethan|A|V|5|3|6;12|Eliot|A|V|5|2|7;12|Rodrigue|A|V|9|6|6;12|Nanaaane|A|V|0|1|16;\
 12|Sacha|B|D|4|6|2;12|Cyrille|B|D|3|6|5;12|Lilian|B|D|4|6|3;12|Clement|B|D|2|9|4;12|Martin|B|D|3|5|5";
-var LOCAL_PSEUDOS={Ethan:"TSM RacloLugubre",Alexis:"Firecrowz59",Alex:"xXLilia92IXx67",Martin:"behindyou",Charles:"SelrahC",Paul:"Do u know CPES",Sacha:"Baro",Maxime:"maxdon",Killian:"kEyzix",Jeanne:"Danette",Mathias:"MathZz05",Cyrille:"제오크스",Adam:"Mercredi1659",Eliot:"culottedepopo",Rodrigue:"EvolvedArts",Clement:"Clemouunito",Smolder:"StolDer",Kody:"Magu",Lilian:"Ack4ck",Iyad:"tonton sahur",Nanaaane:"Nanaaane"};
+var LOCAL_PSEUDOS={Ethan:"TSM RacloLugubre",Alexis:"Firecrowz59",Alex:"xXLilia92IXx67",Martin:"behindyou",Charles:"SelrahC",Paul:"Do u know CPES",Sacha:"Baro",Maxime:"maxdon",Killian:"kEyzix",Jeanne:"Danette",Mathias:"MathZz05",Cyrille:"제요크스",Adam:"Mercredi1659",Eliot:"culottedepopo",Rodrigue:"EvolvedArts",Clement:"Clemouunito",Smolder:"StolDer",Kody:"Magu",Lilian:"Ack4ck",Iyad:"tonton sahur",Nanaaane:"Nanaaane"};
 
 var PLAYERS=[],MATCHES=[],TOTAL_GAMES=0,DATA_SOURCE="local";
 
