@@ -1,33 +1,57 @@
+// Données issues du Google Sheet « Tournoi LOL » (onglet « Classement & Statistiques »)
+// Mise à jour : 11 parties enregistrées. Ordre = ordre du classement du tableur.
+var TOTAL_GAMES=11;
 var PLAYERS=[
-  {id:"sacha",name:"Sacha",games:7,wins:7,losses:0,points:21,kills:37,deaths:18,assists:65},
-  {id:"charles",name:"Charles",games:7,wins:5,losses:2,points:15,kills:51,deaths:21,assists:51},
-  {id:"martin",name:"Martin",games:6,wins:4,losses:2,points:12,kills:29,deaths:36,assists:30},
-  {id:"paul",name:"Paul",games:5,wins:3,losses:2,points:9,kills:26,deaths:22,assists:27},
-  {id:"eliot",name:"Eliot",games:3,wins:3,losses:0,points:9,kills:12,deaths:17,assists:50},
-  {id:"clement",name:"Clement",games:3,wins:2,losses:1,points:6,kills:25,deaths:21,assists:22},
-  {id:"killian",name:"Killian",games:4,wins:2,losses:2,points:6,kills:9,deaths:35,assists:22},
-  {id:"alex",name:"Alex",games:4,wins:2,losses:2,points:6,kills:17,deaths:14,assists:22},
-  {id:"alexis",name:"Alexis",games:2,wins:1,losses:1,points:3,kills:8,deaths:4,assists:8},
-  {id:"maxime",name:"Maxime",games:2,wins:1,losses:1,points:3,kills:14,deaths:11,assists:7},
-  {id:"jeanne",name:"Jeanne",games:2,wins:1,losses:1,points:3,kills:4,deaths:10,assists:13},
-  {id:"adam",name:"Adam",games:2,wins:1,losses:1,points:3,kills:5,deaths:5,assists:13},
-  {id:"rodrigue",name:"Rodrigue",games:3,wins:1,losses:2,points:3,kills:33,deaths:16,assists:14},
-  {id:"kody",name:"Kody",games:3,wins:1,losses:2,points:3,kills:7,deaths:22,assists:38},
-  {id:"cyrille",name:"Cyrille",games:5,wins:1,losses:4,points:3,kills:25,deaths:35,assists:37},
-  {id:"mathias",name:"Mathias",games:2,wins:0,losses:2,points:0,kills:3,deaths:10,assists:6},
-  {id:"smolder",name:"Smolder",games:3,wins:0,losses:3,points:0,kills:18,deaths:15,assists:21},
-  {id:"ethan",name:"Ethan",games:7,wins:0,losses:7,points:0,kills:28,deaths:41,assists:42}
+  {id:"sacha",name:"Sacha",pseudo:"Baro",games:11,wins:11,losses:0,kills:57,deaths:26,assists:90},
+  {id:"charles",name:"Charles",pseudo:"Croqeur2Nichon",games:11,wins:7,losses:4,kills:71,deaths:37,assists:66},
+  {id:"eliot",name:"Eliot",pseudo:"culottedepopo",games:7,wins:6,losses:1,kills:27,deaths:29,assists:78},
+  {id:"clement",name:"Clement",pseudo:"Clemouunito",games:7,wins:4,losses:3,kills:46,deaths:47,assists:42},
+  {id:"martin",name:"Martin",pseudo:"behindyou",games:6,wins:4,losses:2,kills:29,deaths:36,assists:30},
+  {id:"kody",name:"Kody",pseudo:"Magu",games:7,wins:4,losses:3,kills:18,deaths:38,assists:66},
+  {id:"rodrigue",name:"Rodrigue",pseudo:"EvolvedArts",games:7,wins:3,losses:4,kills:69,deaths:35,assists:34},
+  {id:"paul",name:"Paul",pseudo:"Do u know CPES",games:5,wins:3,losses:2,kills:26,deaths:22,assists:27},
+  {id:"lilian",name:"Lilian",pseudo:"Ack4ck",games:4,wins:3,losses:1,kills:23,deaths:13,assists:39},
+  {id:"alex",name:"Alex",pseudo:"xXLilia92IXx67",games:4,wins:2,losses:2,kills:17,deaths:14,assists:22},
+  {id:"killian",name:"Killian",pseudo:"kEyzix",games:4,wins:2,losses:2,kills:9,deaths:35,assists:22},
+  {id:"cyrille",name:"Cyrille",pseudo:"(Coréen)",games:9,wins:1,losses:8,kills:36,deaths:62,assists:47},
+  {id:"ethan",name:"Ethan",pseudo:"KC Raclo Lugubre",games:11,wins:1,losses:10,kills:35,deaths:58,assists:73},
+  {id:"maxime",name:"Maxime",pseudo:"maxdon",games:2,wins:1,losses:1,kills:14,deaths:11,assists:7},
+  {id:"alexis",name:"Alexis",pseudo:"Firecrowz59",games:2,wins:1,losses:1,kills:8,deaths:4,assists:8},
+  {id:"adam",name:"Adam",pseudo:"Mercredi1659",games:2,wins:1,losses:1,kills:5,deaths:5,assists:13},
+  {id:"jeanne",name:"Jeanne",pseudo:"Danette",games:2,wins:1,losses:1,kills:4,deaths:10,assists:13},
+  {id:"smolder",name:"Smolder",pseudo:"StolDer",games:6,wins:0,losses:6,kills:25,deaths:32,assists:24},
+  {id:"mathias",name:"Mathias",pseudo:"MathZz05",games:2,wins:0,losses:2,kills:3,deaths:10,assists:6},
+  {id:"iyad",name:"Iyad",pseudo:"tonton sahur",games:1,wins:0,losses:1,kills:2,deaths:2,assists:4}
 ];
-var KILL_ORDER=["charles","sacha","rodrigue","martin","ethan","paul","cyrille","clement","smolder","alex","maxime","eliot","killian","alexis","kody","adam","jeanne","mathias"];
-var DEATH_ORDER=["ethan","martin","killian","cyrille","paul","kody","clement","charles","sacha","eliot","rodrigue","smolder","alex","maxime","jeanne","mathias","adam","alexis"];
-var ASSIST_ORDER=["sacha","charles","eliot","ethan","kody","cyrille","martin","paul","alex","killian","clement","smolder","rodrigue","jeanne","adam","alexis","maxime","mathias"];
+// Points : 3 par victoire. KDA : (kills + assists) / morts.
+PLAYERS.forEach(function(p){
+  p.points=p.wins*3;
+  p.kda=(p.kills+p.assists)/Math.max(p.deaths,1);
+});
+// Rang avec ex-aequo (1, 2, 3, 4, 4, 4, 7…) selon les points.
+PLAYERS.forEach(function(p,i){
+  p.rank=(i>0&&PLAYERS[i-1].points===p.points)?PLAYERS[i-1].rank:i+1;
+});
+// Classement d'une statistique (tri décroissant, rang partagé en cas d'égalité).
+function statRanking(field){
+  var list=PLAYERS.slice().sort(function(a,b){return b[field]-a[field]});
+  return list.map(function(p,i){
+    var rank=i+1;
+    for(var j=i;j>0&&list[j-1][field]===p[field];j--)rank=j;
+    return {player:p,rank:rank};
+  });
+}
+function statRank(field,id){
+  var r=statRanking(field).find(function(e){return e.player.id===id});
+  return r?r.rank:0;
+}
 
 function setupPlayerSearch(formId,inputId,resultsId,onSearch){
   var form=document.getElementById(formId);
   var input=document.getElementById(inputId);
   var results=document.getElementById(resultsId);
   function normalize(value){
-    return value.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+    return value.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
   }
   function search(){
     results.textContent="";
