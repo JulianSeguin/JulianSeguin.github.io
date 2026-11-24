@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="site.css?v=3">
 <link rel="stylesheet" href="ClassementStatistique.css?v=3">
 <link rel="stylesheet" href="chart.css?v=4">
+<link rel="stylesheet" href="extras.css?v=2">
 
 </head>
 <body>
@@ -48,6 +49,13 @@
       </div>
       <div id="points-chart"></div>
     </section>
+    <section class="chart-card" aria-labelledby="records-title">
+      <div class="chart-head">
+        <h2 id="records-title">Records du tournoi</h2>
+        <p>Les meilleures (et pires) performances, toutes parties confondues.</p>
+      </div>
+      <div class="records-grid" id="records"></div>
+    </section>
     <div class="stats-grid" id="stats-rankings"></div>
   </section>
 </main>
@@ -75,6 +83,7 @@
 </footer>
 <script src="joueurs.js?v=5"></script>
 <script src="chart.js?v=4"></script>
+<script src="extras.js?v=2"></script>
 <script>
 var $=function(id){return document.getElementById(id)};
 function esc(value){return String(value).replace(/[&<>"']/g,function(char){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]})}
@@ -94,6 +103,7 @@ loadTournament().then(function(){
     renderStatRanking("Assists","assists","A")+
     renderStatRanking("KDA","kda","",function(v){return v.toFixed(2).replace(".",",")});
   renderPointsChart("points-chart");
+  renderRecords("records");
   showDataSource();
 });
 function filterRankings(query){

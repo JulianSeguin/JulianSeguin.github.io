@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="site.css?v=3">
 <link rel="stylesheet" href="Joueur.css?v=4">
 <link rel="stylesheet" href="chart.css?v=4">
+<link rel="stylesheet" href="extras.css?v=2">
 
 </head>
 <body>
@@ -53,6 +54,7 @@
 </footer>
 <script src="joueurs.js?v=5"></script>
 <script src="chart.js?v=4"></script>
+<script src="extras.js?v=2"></script>
 <script>
 var profile=document.getElementById("profile");
 profile.innerHTML='<p class="data-source">Chargement du profil…</p>';
@@ -111,11 +113,14 @@ profile.innerHTML=
   '</div>'+
   '<section class="chart-card" aria-labelledby="chart-title"><div class="chart-head"><h2 id="chart-title">Évolution des points</h2>'+
   '<p>Points cumulés de '+esc(player.name)+' après chaque partie. Ajoute jusqu’à 4 joueurs pour comparer.</p></div><div id="points-chart"></div></section>'+
+  '<section class="chart-card" aria-labelledby="duel-title"><div class="chart-head"><h2 id="duel-title">Face-à-face</h2>'+
+  '<p>Compare '+esc(player.name)+' à un autre joueur. Le meilleur des deux est marqué en or.</p></div><div id="duel"></div></section>'+
   '<h2 class="profile-section-title">Historique des parties</h2>'+
   '<div class="history-wrap"><table class="history"><thead><tr><th scope="col">Partie</th><th scope="col">Résultat</th><th scope="col">K / D / A</th><th scope="col" class="num">KDA</th><th scope="col" class="mates">Coéquipiers</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
   '<p class="data-source"></p>'+
   '<a class="profile-back" href="Profils.html">← Retour aux profils</a>';
 renderPointsChart("points-chart",[player.id],[player.id]);
+renderDuel("duel",player.id);
 showDataSource();
 });
 </script>

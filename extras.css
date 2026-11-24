@@ -1,0 +1,50 @@
+/* Records du tournoi et face-à-face (page Stats) — réutilise .chart-card / .chart-head */
+.records-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.record{display:flex;flex-direction:column;gap:6px;padding:14px;background:var(--row);border:1px solid var(--bd);border-radius:var(--radius-sm)}
+.record-label{display:flex;align-items:center;gap:6px;color:var(--mu);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.record-label i{font-style:normal;font-size:.95rem;letter-spacing:0}
+.record strong{font-size:1.6rem;line-height:1.1;color:var(--goldi);font-variant-numeric:tabular-nums}
+.record strong small{font-size:.8rem;color:var(--mu);font-weight:600}
+.record.is-bad strong{color:var(--loss)}
+.record ul{margin:0;padding:0;list-style:none;display:grid;gap:3px;font-size:.88rem;font-weight:600}
+.record li span{display:block;color:var(--mu);font-weight:500;font-size:.8rem}
+.record li.more{color:var(--mu);font-size:.8rem}
+.record a{color:var(--tx);text-decoration:none}
+.record a:hover{color:var(--goldi);text-decoration:underline;text-underline-offset:3px}
+.record li span a{color:var(--mu)}
+
+.duel-pick{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:12px;margin-bottom:14px}
+.duel-pick label{display:grid;gap:4px}
+.duel-pick label span{color:var(--mu);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.duel-pick select{min-height:44px;padding:8px 12px;border:1px solid var(--bd-strong);border-radius:var(--radius-sm);background:var(--row);color:var(--tx);font:600 1rem var(--font)}
+.duel-pick select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.duel-vs{padding-bottom:10px;font-family:var(--display);color:var(--goldi);font-size:1.1rem}
+.duel-table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.duel-table thead th{padding:6px 8px 10px;font-size:1.05rem;text-transform:uppercase}
+.duel-table thead th:first-child{text-align:left}
+.duel-table thead th:last-child{text-align:right}
+.duel-table thead a{color:var(--tx);text-decoration:none}
+.duel-table thead a:hover{color:var(--goldi)}
+.duel-table tbody th{padding:8px;color:var(--mu);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:center;width:40%}
+.duel-table td,.duel-table tbody th{border-top:1px solid var(--bd)}
+.duel-v{padding:8px;font-size:1.05rem;font-weight:700;width:30%}
+.duel-v:last-child{text-align:right}
+.duel-v.is-best{color:var(--goldi)}
+.duel-v.is-best::after{content:" ▲";font-size:.7rem}
+.duel-v:first-child.is-best::after{content:""}
+.duel-v:first-child.is-best::before{content:"▲ ";font-size:.7rem}
+.duel-bar{display:block;height:4px;margin-top:6px;border-radius:2px;background:var(--bd);overflow:hidden}
+.duel-bar i{display:block;height:100%;background:var(--gold)}
+.duel-common{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.duel-common div{padding:12px;background:var(--row);border:1px solid var(--bd);border-radius:var(--radius-sm)}
+.duel-common span{display:block;color:var(--mu);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.duel-common strong{font-size:1.05rem}
+.duel-games,.duel-empty{margin:10px 0 0;color:var(--mu);font-size:.88rem}
+.duel-games a{color:var(--goldi)}
+@media(max-width:860px){.records-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){
+  .duel-pick{grid-template-columns:1fr}
+  .duel-vs{padding:0;text-align:center}
+  .duel-common{grid-template-columns:1fr}
+  .duel-table tbody th{font-size:.7rem}
+}
