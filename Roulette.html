@@ -420,7 +420,7 @@ document.querySelectorAll(".mode-btn").forEach(function(btn){
     ARENA=arena;
     document.querySelectorAll(".mode-btn").forEach(function(b){b.setAttribute("aria-pressed",String((b.dataset.mode==="arena")===ARENA))});
     $("mode-lead").textContent=ARENA
-      ?"Entre jusqu’à 18 joueurs et tire au sort jusqu’à 6 équipes de 3 (la dernière équipe peut être incomplète). Pas de lanes en Arena."
+      ?"Entre jusqu’à 18 joueurs et tire au sort jusqu’à 6 équipes de 3."
       :"Entre jusqu’à 10 joueurs, tire les équipes au sort puis les lanes de chaque équipe.";
     init();
   };
