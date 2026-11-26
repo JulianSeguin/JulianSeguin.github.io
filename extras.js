@@ -47,8 +47,17 @@ function renderRecords(containerId){
     {label:"Partie la plus sanglante",icon:"🩸",r:matchRecord(function(m){return m.killsA+m.killsB},score),unit:" kills"},
     {label:"Plus gros écart",icon:"📉",r:matchRecord(function(m){return Math.abs(m.killsA-m.killsB)},score),unit:" kills"},
     {label:"Plus longue série de victoires",icon:"🔥",r:playerRecord(function(p){return p.bestWinStreak}),unit:" d’affilée"},
-    {label:"Le plus de MVP",icon:"🏅",r:playerRecord(function(p){return mvpCount[p.id]||0}),unit:" fois"}
+    {label:"Le plus de MVP",icon:"🏅",r:playerRecord(function(p){return mvpCount[p.id]||0}),unit:" fois"},
+    {label:"Partie la plus longue",icon:"⏳",r:timedRecord(1),unit:" min",fmt:fmtMin},
+    {label:"Partie la plus courte",icon:"⚡",r:timedRecord(-1),unit:" min",fmt:fmtMin}
   ];
+  // Durées : seules les parties dont la durée est saisie comptent (signe -1 = plus courte)
+  function timedRecord(sign){
+    var t=topOf(MATCHES.filter(function(m){return m.duration}),function(m){return sign*m.duration});
+    if(!t.items.length)return {value:null,who:['<span>Durées pas encore saisies</span>']};
+    return {value:Math.abs(t.value),who:t.items.map(function(m){return gameLink(m.num)+' <span>'+score(m)+'</span>'})};
+  }
+  function fmtMin(v){return fmt(v,v%1?1:0)}
 
   box.innerHTML=cards.map(function(c){
     var v=c.r.value===null?"—":(c.fmt?c.fmt(c.r.value):c.r.value);
@@ -139,4 +148,39 @@ function renderDuel(containerId,fixedId){
   selA.addEventListener("change",draw);
   selB.addEventListener("change",draw);
   draw();
+}
+
+/* Rythme d'un joueur, calculé sur ses parties dont la durée est saisie */
+function playerPace(player){
+  var byNum={};MATCHES.forEach(function(m){byNum[m.num]=m});
+  var timed=player.history.filter(function(g){return byNum[g.game]&&byNum[g.game].duration});
+  if(!timed.length)return null;
+  var min=0,k=0,d=0,a=0;
+  timed.forEach(function(g){min+=byNum[g.game].duration;k+=g.kills;d+=g.deaths;a+=g.assists});
+  return {games:timed.length,avg:min/timed.length,kpm:k/min,dpm:d/min,apm:a/min};
+}
+
+/* Badges : attribués parmi les joueurs ayant au moins MIN_GAMES_STATS parties */
+function computeBadges(){
+  var out={},pool=PLAYERS.filter(statEligible);
+  PLAYERS.forEach(function(p){out[p.id]=[]});
+  function give(id,b){out[id].push(b)}
+  function best(value,low){
+    if(!pool.length)return [];
+    var vals=pool.map(value),target=low?Math.min.apply(null,vals):Math.max.apply(null,vals);
+    return pool.filter(function(p,i){return vals[i]===target&&(low||target>0)});
+  }
+  function per(f){return function(p){return p[f]/p.games}}
+  var mvp={};MATCHES.forEach(function(m){if(m.mvp)mvp[m.mvp.id]=(mvp[m.mvp.id]||0)+1});
+  best(per("kills")).forEach(function(p){give(p.id,{icon:"⚔",name:"Assassin",desc:"Le plus de kills par partie"})});
+  best(per("assists")).forEach(function(p){give(p.id,{icon:"🤝",name:"Pilier",desc:"Le plus d’assists par partie"})});
+  best(per("deaths"),true).forEach(function(p){give(p.id,{icon:"🛡",name:"Survivant",desc:"Le moins de morts par partie"})});
+  best(function(p){return mvp[p.id]||0}).forEach(function(p){give(p.id,{icon:"🏅",name:"Roi des MVP",desc:"Le plus de titres de MVP"})});
+  best(function(p){return p.bestWinStreak}).forEach(function(p){give(p.id,{icon:"🔥",name:"Inarrêtable",desc:"Plus longue série de victoires"})});
+  PLAYERS.forEach(function(p){
+    if(p.rank===1)give(p.id,{icon:"👑",name:"Leader",desc:"1er du classement"});
+    if(p.streak.type==="V"&&p.streak.count>=3)give(p.id,{icon:"📈",name:"En feu",desc:p.streak.count+" victoires d’affilée en cours"});
+    if(p.games>=3&&p.losses===0)give(p.id,{icon:"💎",name:"Invaincu",desc:"Aucune défaite"});
+  });
+  return out;
 }

@@ -13,9 +13,9 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Russo+One&display=swap"></noscript>
 <script src="theme.js?v=3"></script>
 <link rel="stylesheet" href="site.css?v=3">
-<link rel="stylesheet" href="Joueur.css?v=4">
+<link rel="stylesheet" href="Joueur.css?v=6">
 <link rel="stylesheet" href="chart.css?v=4">
-<link rel="stylesheet" href="extras.css?v=2">
+<link rel="stylesheet" href="extras.css?v=3">
 
 </head>
 <body>
@@ -58,7 +58,7 @@
 </footer>
 <script src="joueurs.js?v=6"></script>
 <script src="chart.js?v=4"></script>
-<script src="extras.js?v=2"></script>
+<script src="extras.js?v=3"></script>
 <script>
 var profile=document.getElementById("profile");
 profile.innerHTML='<p class="data-source">Chargement du profil…</p>';
@@ -91,10 +91,13 @@ var form=player.history.slice(-5).map(function(g){return '<span class="form-dot 
 var bg=player.bestGame;
 var mvpGames=player.history.filter(function(g){return g.isMvp}).map(function(g){return g.game});
 var mvpDetail=mvpGames.length?(mvpGames.length>1?'Parties ':'Partie ')+mvpGames.join(', '):'Pas encore MVP';
+var badges=computeBadges()[player.id]||[],pace=playerPace(player);
 var streakLabel=player.streak.count+' '+(player.streak.type==="V"?'victoire':'défaite')+(player.streak.count>1?'s':'');
 
 profile.innerHTML=
+  '<a class="profile-back" href="Profils.html">← Retour aux profils</a>'+
   '<header class="profile-top"><div class="profile-rank'+(rank>3?' is-other':'')+'" data-rank="'+rank+'">#'+rank+'</div><div><p class="eyebrow">Profil joueur</p><h1>'+esc(player.name)+'</h1>'+(player.pseudo?'<p class="pseudo">'+esc(player.pseudo)+'</p>':'')+'</div></header>'+
+  (badges.length?'<ul class="badges" aria-label="Badges">'+badges.map(function(b){return '<li class="badge" title="'+b.desc+'"><span aria-hidden="true">'+b.icon+'</span>'+b.name+'<small>'+b.desc+'</small></li>'}).join("")+'</ul>':'')+
   '<h2 class="profile-section-title">Résultats</h2>'+
   '<div class="profile-stats profile-summary">'+
   '<div class="profile-stat is-pts"><strong>'+player.points+'</strong><span>Points</span></div>'+
@@ -107,6 +110,15 @@ profile.innerHTML=
   '<div class="profile-stat"><strong>'+player.deaths+'</strong><span>Morts</span><small>'+rankLabel("deaths")+'</small></div>'+
   '<div class="profile-stat"><strong>'+player.assists+'</strong><span>Assists</span><small>'+rankLabel("assists")+'</small></div>'+
   '<div class="profile-stat"><strong>'+fmt(player.kda)+'</strong><span>KDA</span><small>'+rankLabel("kda")+'</small></div>'+
+  '</div>'+
+  '<h2 class="profile-section-title">Rythme</h2><div class="profile-stats profile-pace">'+
+  (pace?
+    '<div class="profile-stat"><strong>'+fmt(pace.avg,0)+'<small class="unit"> min</small></strong><span>Durée moyenne</span></div>'+
+    '<div class="profile-stat"><strong>'+fmt(pace.kpm)+'</strong><span>Kills / min</span></div>'+
+    '<div class="profile-stat"><strong>'+fmt(pace.apm)+'</strong><span>Assists / min</span></div>'+
+    '<div class="profile-stat"><strong>'+fmt(pace.dpm)+'</strong><span>Morts / min</span></div>'+
+    (pace.games<player.games?'<p class="pace-note">Calculé sur '+pace.games+' partie'+(pace.games>1?'s':'')+' sur '+player.games+' (durée non saisie pour les autres).</p>':'')
+  :'<p class="pace-note">Disponible dès que la durée des parties est saisie dans le Sheet.</p>')+
   '</div>'+
   '<h2 class="profile-section-title">Forme</h2><div class="profile-highlights">'+
   '<div class="hl is-mvp" title="MVP : joueur de l’équipe gagnante avec le meilleur KDA de la partie"><span class="hl-label">MVP</span><strong>'+mvpGames.length+'<small class="unit"> fois</small></strong><small>'+mvpDetail+'</small></div>'+
@@ -121,8 +133,7 @@ profile.innerHTML=
   '<p>Compare '+esc(player.name)+' à un autre joueur. Le meilleur des deux est marqué en or.</p></div><div id="duel"></div></section>'+
   '<h2 class="profile-section-title">Historique des parties</h2>'+
   '<div class="history-wrap"><table class="history"><thead><tr><th scope="col">Partie</th><th scope="col">Résultat</th><th scope="col">K / D / A</th><th scope="col" class="num">KDA</th><th scope="col" class="mates">Coéquipiers</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
-  '<p class="data-source"></p>'+
-  '<a class="profile-back" href="Profils.html">← Retour aux profils</a>';
+  '<p class="data-source"></p>';
 renderPointsChart("points-chart",[player.id],[player.id]);
 renderDuel("duel",player.id);
 showDataSource();
