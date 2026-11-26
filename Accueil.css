@@ -1,0 +1,63 @@
+/* Page d'accueil (styles partagés dans site.css) */
+main .card.home{max-width:980px}
+.home-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:20px}
+.kpi{padding:16px 12px;text-align:center;background:var(--row);border:1px solid var(--bd);border-radius:var(--radius-sm)}
+.kpi strong{display:block;font-family:var(--display);font-size:1.8rem;line-height:1.1;color:var(--goldi);font-variant-numeric:tabular-nums}
+.kpi strong small{font-family:var(--font);font-size:.9rem;color:var(--mu)}
+.kpi span{display:block;margin-top:4px;color:var(--mu);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+
+.home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.home-block{padding:16px;background:var(--card);border:1px solid var(--bd);border-radius:var(--radius)}
+.home-block-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
+.home-block-head h2{font-size:1.05rem;text-transform:uppercase}
+.home-block-head a{color:var(--goldi);font-size:.82rem;font-weight:700;text-decoration:none;white-space:nowrap}
+.home-block-head a:hover{text-decoration:underline;text-underline-offset:3px}
+.home a{color:inherit}
+
+.home-top{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.home-top li{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding:10px 12px;background:var(--row);border:1px solid var(--bd);border-radius:var(--radius-sm)}
+.home-top a{font-weight:700;text-decoration:none}
+.home-top a:hover{color:var(--goldi)}
+.home-top .meta{color:var(--mu);font-size:.82rem;font-weight:600}
+.home-top strong{font-variant-numeric:tabular-nums;color:var(--goldi)}
+.home-top strong small{color:var(--mu);font-size:.75rem}
+.home-top .rank-badge{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;font-family:var(--display);font-size:.9rem;color:#14100a;background:var(--gold)}
+.home-top li[data-rank="2"] .rank-badge{background:var(--silver)}
+.home-top li[data-rank="3"] .rank-badge{background:var(--bronze)}
+
+.last-head{display:flex;align-items:baseline;gap:12px;padding:10px 12px;background:var(--row);border:1px solid var(--bd);border-radius:var(--radius-sm);text-decoration:none}
+.last-head span{font-weight:700;text-transform:uppercase}
+.last-head .score{font-size:1.2rem;color:var(--mu);font-variant-numeric:tabular-nums}
+.last-head .score i{font-style:normal}
+.last-head .score i.w{color:var(--tx)}
+.last-head small{margin-left:auto;color:var(--mu);font-weight:700}
+.last-head:hover{border-color:var(--gold)}
+.last-win,.last-mvp{margin:10px 0 0;font-weight:600;line-height:1.5}
+.last-win span{display:block;color:var(--win);font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.last-win a,.last-mvp a,.home-list a{text-decoration:none}
+.last-win a:hover,.last-mvp a:hover,.home-list a:hover{color:var(--goldi);text-decoration:underline;text-underline-offset:3px}
+.last-mvp{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.last-mvp small{color:var(--mu)}
+.mvp-tag{padding:1px 7px;border-radius:5px;background:var(--gold);color:var(--on-gold);font-size:.68rem;font-weight:700;letter-spacing:.06em}
+
+.home-list{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.home-list li{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--row);border:1px solid var(--bd);border-radius:var(--radius-sm);font-weight:700}
+.home-list li small{color:var(--mu);font-weight:600;font-size:.82rem}
+.home-list li > small{margin-left:auto}
+.home-list .ico{width:22px;text-align:center;color:var(--goldi)}
+.home-list .rec-l{display:grid;flex:1;min-width:0}
+.home-list .rec-l small a{color:var(--mu)}
+.home-list li strong{color:var(--goldi);font-variant-numeric:tabular-nums;white-space:nowrap}
+.home-list li.empty{color:var(--mu);font-weight:600}
+
+.home-cta{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;padding:16px 18px;border-radius:var(--radius);background:var(--gold-soft);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);text-decoration:none}
+.home-cta strong{color:var(--goldi)}
+.home-cta b{font-size:1.3rem;color:var(--goldi)}
+.home-cta:hover{border-color:var(--gold)}
+
+@media(max-width:760px){.home-grid{grid-template-columns:1fr}}
+@media(max-width:560px){
+  .home-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .home-top .meta{display:none}
+  .home-top li{grid-template-columns:auto 1fr auto}
+}

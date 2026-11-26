@@ -158,13 +158,15 @@ p.data-source[data-live="true"]::before{background:var(--win);box-shadow:0 0 0 3
   .theme-toggle{padding:10px 12px}
   .footer-bottom{flex-direction:column}
 }
-@media(max-width:560px){
+/* 6 onglets : icône au-dessus du libellé dès que la place manque */
+@media(max-width:900px){
   .hdr-in{gap:6px}
   .pill{justify-content:space-between;overflow:visible}
-  .pill a{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:8px 2px 10px;font-size:.66rem;letter-spacing:-.01em}
+  .pill a{flex:1 1 0;min-width:0;flex-direction:column;gap:3px;padding:8px 2px 10px;font-size:.78rem}
   .pill a[aria-current="page"]::after{left:30%;right:30%;bottom:1px}
   .theme-toggle{min-height:40px;padding:8px 10px}
 }
+@media(max-width:560px){.pill a{font-size:.62rem;letter-spacing:-.02em}.pill a svg{width:17px;height:17px}}
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{transition:none!important;animation:none!important}
   ::view-transition-old(root),::view-transition-new(root){animation:none!important}
