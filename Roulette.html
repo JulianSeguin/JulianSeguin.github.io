@@ -25,7 +25,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Russo+One&display=swap"></noscript>
 <script src="theme.js?v=3"></script>
 <link rel="stylesheet" href="site.css?v=5">
-<link rel="stylesheet" href="Roulette.css?v=3">
+<link rel="stylesheet" href="Roulette.css?v=5">
 
 </head>
 <body>
@@ -47,7 +47,11 @@
 <header class="page-head">
   <p>League of Legends</p>
   <h1>Roulette</h1>
-  <p class="lead">Entre jusqu’à 10 joueurs, tire les équipes au sort puis les lanes de chaque équipe.</p>
+  <p class="lead" id="mode-lead">Entre jusqu’à 10 joueurs, tire les équipes au sort puis les lanes de chaque équipe.</p>
+  <div class="mode-switch" role="group" aria-label="Format de la partie">
+    <button type="button" class="mode-btn" data-mode="sr" aria-pressed="true">5 contre 5</button>
+    <button type="button" class="mode-btn" data-mode="arena" aria-pressed="false">Arena (équipes de 3)</button>
+  </div>
 </header>
 
 <section class="card">
@@ -63,6 +67,8 @@
   </div>
 </section>
 
+<p class="arena-msg" id="arena-msg" role="status" hidden></p>
+<div class="arena-grid" id="arena-grid" hidden></div>
 <div class="grid" id="team-grid">
   <section class="card team t-blue">
     <div class="hd"><h2>Équipe bleue</h2><span class="cnt" id="c1">0/5</span></div>
@@ -108,10 +114,16 @@
 <script>
 var COLORS=["#d6453d","#e8912d","#2f9e6e","#2f7fd1","#7c4fc4","#cf3f85","#1f9ea3","#b8962e","#5566c9","#c9622e"];
 var GOLD="#c8aa6e",NAVY="#0a1428",FONT="'Chakra Petch',system-ui,sans-serif";
-var LANES=["Top","Jungle","Mid","ADC","Support"];
+var LANES5=["Top","Jungle","Mid","ADC","Support"];
+var SIZE=5;
+function laneList(){return LANES5}
+// Mode Arena : équipes de 3, jusqu'à 6 équipes (18 joueurs), pas de lanes
+var ARENA=false,ARENA_SIZE=3,ARENA_MAX=18,arenaTeams=[],arenaCaps=[];
+function maxNames(){return ARENA?ARENA_MAX:SIZE*2}
+function slots(){var a=[];for(var i=0;i<SIZE;i++)a.push(i);return a}
 var automatic=[false,false,false],autoTimers=[null,null,null],teamAutoRunning=false,teamAutoTimer=null,teamAutoPhase=-1;
 function anySpin(){return w0.spinning||w1.spinning||w2.spinning||automatic.some(Boolean)||teamAutoRunning}
-var DEFAULT_NAMES=["Joueur 1","Joueur 2","Joueur 3","Joueur 4","Joueur 5","Joueur 6","Joueur 7","Joueur 8","Joueur 9","Joueur 10"];
+var DEFAULT_NAMES=[];for(var dn=1;dn<=18;dn++)DEFAULT_NAMES.push("Joueur "+dn);
 
 function Wheel(id){
   this.c=document.getElementById(id);this.x=this.c.getContext("2d");this.items=[];this.rot=0;this.spinning=false;
@@ -168,8 +180,9 @@ var $=function(id){return document.getElementById(id)};
 function esc(s){return String(s).replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]})}
 
 function parseNames(){
-  var v=$("names").value.split("\n").map(function(s){return s.trim()}).filter(Boolean).slice(0,10);
-  while(v.length<10)v.push(DEFAULT_NAMES[v.length]);
+  var v=$("names").value.split("\n").map(function(s){return s.trim()}).filter(Boolean).slice(0,maxNames());
+  if(ARENA){if(!v.length)v=DEFAULT_NAMES.slice(0,6);return v}
+  while(v.length<SIZE*2)v.push(DEFAULT_NAMES[v.length]);
   return v;
 }
 function resizeNames(){
@@ -178,8 +191,8 @@ function resizeNames(){
   names.rows=Math.max(names.value.split("\n").length,1);
 }
 function limitNames(){
-  var names=$("names"),rows=names.value.split("\n"),players=rows.filter(function(name){return name.trim()}),value=players.slice(0,10).join("\n");
-  if(!rows[rows.length-1].trim()&&players.length<10)value+="\n";
+  var names=$("names"),rows=names.value.split("\n"),players=rows.filter(function(name){return name.trim()}),value=players.slice(0,maxNames()).join("\n");
+  if(!rows[rows.length-1].trim()&&players.length<maxNames())value+="\n";
   if(names.value!==value)names.value=value;
   resizeNames();
 }
@@ -187,7 +200,10 @@ function init(){
   automatic.forEach(function(running,index){if(running)stopAutomatic(index)});
   stopTeamAutomatic();
   pool=parseNames();$("names").value=pool.join("\n");resizeNames();
-  teams=[[],[]];lanes=[{p:[],a:[null,null,null,null,null],pool:LANES.slice()},{p:[],a:[null,null,null,null,null],pool:LANES.slice()}];
+  $("team-grid").hidden=ARENA;$("arena-grid").hidden=!ARENA;
+  if(ARENA){initArena();return}
+  $("arena-msg").hidden=true;$("a0").disabled=false;
+  teams=[[],[]];lanes=[0,1].map(function(){return {p:[],a:slots().map(function(){return null}),pool:laneList().slice()}});
   w0.items=pool.slice();w1.items=[];w2.items=[];
   [w0,w1,w2].forEach(function(w){w.rot=0;w.draw()});
   $("s0").disabled=false;$("s1").disabled=true;$("s2").disabled=true;
@@ -204,15 +220,15 @@ function renderTeams(fl){
       var lane=lanes[t].a[k],ini=Array.from(name)[0]||"?";
       h+='<li'+(fl.indexOf(t+"-"+k)>-1?' class="flash"':'')+'><span class="av">'+esc(ini.toUpperCase())+'</span><span class="nm">'+esc(name)+'</span><span class="ch'+(lane?' on':'')+'">'+(lane||"—")+'</span></li>';
     });
-    for(var k=teams[t].length;k<5;k++)h+='<li class="empty"><span class="av">+</span><span class="nm">Place libre</span><span class="ch">—</span></li>';
+    for(var k=teams[t].length;k<SIZE;k++)h+='<li class="empty"><span class="av">+</span><span class="nm">Place libre</span><span class="ch">—</span></li>';
     $("l"+(t+1)).innerHTML=h;
-    $("c"+(t+1)).textContent=teams[t].length+"/5";
+    $("c"+(t+1)).textContent=teams[t].length+"/"+SIZE;
   });
 }
 function readyTeam(t){
   var w=t?w2:w1;
-  if(teams[t].length===5&&lanes[t].p.length===0&&!w.items.length){w.items=lanes[t].pool.slice();w.draw();}
-  var enabled=teams[t].length===5&&lanes[t].pool.length>0;
+  if(teams[t].length===SIZE&&lanes[t].p.length===0&&!w.items.length){w.items=lanes[t].pool.slice();w.draw();}
+  var enabled=teams[t].length===SIZE&&lanes[t].pool.length>0;
   $("s"+(t+1)).disabled=!enabled;
   updateTeamAutoAvailability();
 }
@@ -220,7 +236,7 @@ function spinTeams(){
   w0.spin(function(i){
     var name=w0.items.splice(i,1)[0],fl=["0-"+teams[0].length];
     teams[0].push(name);
-    if(teams[0].length===5&&w0.items.length){
+    if(teams[0].length===SIZE&&w0.items.length){
       var rest=w0.items.splice(0);
       rest.forEach(function(p){fl.push("1-"+teams[1].length);teams[1].push(p)});
     }
@@ -229,21 +245,64 @@ function spinTeams(){
     finishAutomatic(0,w0.items.length===0);
   });
 }
-$("s0").onclick=spinTeams;
-var spinActions=[spinTeams];
+function initArena(){
+  // Équipes de 3 remplies dans l'ordre ; la dernière garde les joueurs restants (1 ou 2)
+  var n=pool.length,ok=n>=2,count=Math.ceil(n/ARENA_SIZE);
+  arenaCaps=[];for(var i=0;i<Math.max(count,1);i++)arenaCaps.push(ARENA_SIZE);
+  if(n%ARENA_SIZE)arenaCaps[count-1]=n%ARENA_SIZE;
+  arenaTeams=arenaCaps.map(function(){return []});
+  w0.items=ok?pool.slice():[];w0.rot=0;w0.draw();w1.items=[];w2.items=[];
+  var msg=$("arena-msg");
+  msg.hidden=ok;
+  msg.textContent=ok?"":"Arena : il faut au moins 2 joueurs.";
+  $("s0").disabled=!ok;$("a0").disabled=!ok;
+  $("s0").parentElement.style.display="";
+  renderArena();
+}
+function renderArena(fl){
+  fl=fl||[];
+  $("arena-grid").innerHTML=arenaTeams.map(function(team,t){
+    var h='<section class="card team arena-team" style="--team:'+COLORS[(t*3)%COLORS.length]+'"><div class="hd"><h2>Équipe '+(t+1)+'</h2><span class="cnt">'+team.length+'/'+arenaCaps[t]+'</span></div><ul>';
+    team.forEach(function(name,k){
+      var ini=Array.from(name)[0]||"?";
+      h+='<li'+(fl.indexOf(t+"-"+k)>-1?' class="flash"':'')+'><span class="av">'+esc(ini.toUpperCase())+'</span><span class="nm">'+esc(name)+'</span></li>';
+    });
+    for(var k=team.length;k<arenaCaps[t];k++)h+='<li class="empty"><span class="av">+</span><span class="nm">Place libre</span></li>';
+    return h+'</ul></section>';
+  }).join("");
+}
+function spinArena(){
+  w0.spin(function(i){
+    var name=w0.items.splice(i,1)[0];
+    var t=arenaTeams.findIndex(function(team,j){return team.length<arenaCaps[j]}),fl=[t+"-"+arenaTeams[t].length];
+    arenaTeams[t].push(name);
+    // Dernière équipe : les joueurs restants la complètent directement
+    var open=arenaTeams.filter(function(team,j){return team.length<arenaCaps[j]});
+    if(open.length===1&&w0.items.length===arenaCaps[arenaTeams.indexOf(open[0])]-open[0].length){
+      var last=arenaTeams.indexOf(open[0]);
+      w0.items.splice(0).forEach(function(p){fl.push(last+"-"+open[0].length);open[0].push(p)});
+    }
+    w0.draw();renderArena(fl);
+    if(!w0.items.length){$("s0").disabled=true;$("s0").parentElement.style.display="none";}
+    finishAutomatic(0,w0.items.length===0);
+  });
+}
+function spinMain(){ARENA?spinArena():spinTeams()}
+$("s0").onclick=spinMain;
+var spinActions=[spinMain];
 [0,1].forEach(function(t){
   var w=t?w2:w1;
   var wheelIndex=t+1;
   function spinLanes(){
     w.spin(function(i){
       var lane=w.items.splice(i,1)[0];
-      var free=[0,1,2,3,4].filter(function(j){return !lanes[t].a[j]});
+      var free=slots().filter(function(j){return !lanes[t].a[j]});
       var k=free[Math.floor(Math.random()*free.length)],fl=[t+"-"+k];
       lanes[t].a[k]=lane;
       lanes[t].p.push(lane);
       lanes[t].pool=w.items.slice();
       if(w.items.length===1){
-        var last=[0,1,2,3,4].filter(function(j){return !lanes[t].a[j]})[0];
+        var last=slots().filter(function(j){return !lanes[t].a[j]})[0];
         var ll=w.items.splice(0)[0];
         lanes[t].a[last]=ll;lanes[t].p.push(ll);lanes[t].pool=[];fl.push(t+"-"+last);
       }
@@ -256,14 +315,14 @@ var spinActions=[spinTeams];
   $("s"+wheelIndex).onclick=spinLanes;
   spinActions[wheelIndex]=spinLanes;
 });
-$("a0").onclick=function(){toggleAutomatic(0,spinTeams)};
+$("a0").onclick=function(){toggleAutomatic(0,spinMain)};
 function updateTeamAutoAvailability(){
   if(teamAutoRunning)return;
   var finished=lanes&&lanes[0].pool.length===0&&lanes[1].pool.length===0;
   $("team-auto-control").hidden=!!finished;
   $("team-grid").classList.toggle("teams-finished",!!finished);
-  var blueReady=!!teams&&teams[0].length===5&&lanes[0].pool.length>0;
-  var redReady=!!teams&&teams[1].length===5&&lanes[1].pool.length>0;
+  var blueReady=!!teams&&teams[0].length===SIZE&&lanes[0].pool.length>0;
+  var redReady=!!teams&&teams[1].length===SIZE&&lanes[1].pool.length>0;
   $("aTeam").disabled=!(blueReady&&redReady);
 }
 function stopTeamAutomatic(){
@@ -307,7 +366,7 @@ function syncSpinButton(index){
   if(index>0&&teamAutoRunning){$("s"+index).disabled=true;return}
   var available=index===0
     ?w0.items.length>0
-    :!!teams&&teams[index-1].length===5&&lanes[index-1].pool.length>0;
+    :!!teams&&teams[index-1].length===SIZE&&lanes[index-1].pool.length>0;
   $("s"+index).disabled=wheel.spinning||!available;
 }
 function toggleAutomatic(index,spin){
@@ -330,7 +389,7 @@ function finishAutomatic(index,finished){
         teamAutoTimer=setTimeout(function(){
           teamAutoTimer=null;
           if(!teamAutoRunning)return;
-          if(teams[1].length===5&&lanes[1].pool.length>0){
+          if(teams[1].length===SIZE&&lanes[1].pool.length>0){
             automatic[2]=true;
             spinActions[2]();
           }else{
@@ -354,12 +413,24 @@ function finishAutomatic(index,finished){
     if(automatic[index])spinActions[index]();
   },300);
 }
+document.querySelectorAll(".mode-btn").forEach(function(btn){
+  btn.onclick=function(){
+    var arena=btn.dataset.mode==="arena";
+    if(arena===ARENA||anySpin())return;
+    ARENA=arena;
+    document.querySelectorAll(".mode-btn").forEach(function(b){b.setAttribute("aria-pressed",String((b.dataset.mode==="arena")===ARENA))});
+    $("mode-lead").textContent=ARENA
+      ?"Entre jusqu’à 18 joueurs et tire au sort jusqu’à 6 équipes de 3 (la dernière équipe peut être incomplète). Pas de lanes en Arena."
+      :"Entre jusqu’à 10 joueurs, tire les équipes au sort puis les lanes de chaque équipe.";
+    init();
+  };
+});
 $("apply").onclick=function(){if(!anySpin())init()};
 $("reset").onclick=function(){if(!anySpin())init()};
 $("names").addEventListener("input",limitNames);
 $("names").addEventListener("keydown",function(event){
   var currentLine=this.value.slice(0,this.selectionStart).split("\n").pop();
-  if(event.key==="Enter"&&(!currentLine.trim()||this.value.split("\n").filter(function(name){return name.trim()}).length>=10))event.preventDefault();
+  if(event.key==="Enter"&&(!currentLine.trim()||this.value.split("\n").filter(function(name){return name.trim()}).length>=maxNames()))event.preventDefault();
 });
 init();
 

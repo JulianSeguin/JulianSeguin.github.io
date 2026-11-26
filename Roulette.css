@@ -57,3 +57,14 @@ canvas{width:100%;height:auto;display:block;border-radius:50%;box-shadow:0 10px 
   .grid.teams-finished{display:grid;grid-template-columns:minmax(0,1fr);max-width:600px}
   .grid.teams-finished>.team{max-width:none}
 }
+.mode-switch{display:inline-flex;gap:4px;margin-top:16px;padding:4px;border:1px solid var(--bd);border-radius:999px;background:var(--row)}
+.mode-btn{min-height:40px;padding:8px 18px;border:0;border-radius:999px;background:transparent;color:var(--mu);font:700 .95rem var(--font);cursor:pointer;box-shadow:none}
+.mode-btn:hover{color:var(--tx);background:transparent}
+.mode-btn[aria-pressed="true"]{background:var(--gold);color:var(--on-gold)}
+.arena-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:1100px;margin:0 auto 16px}
+.arena-grid[hidden],.grid[hidden]{display:none}
+.arena-grid .card{margin:0}
+.arena-msg{max-width:1100px;margin:0 auto 16px;padding:12px 16px;border:1px solid color-mix(in srgb,var(--loss) 45%,transparent);border-radius:var(--radius-sm);background:color-mix(in srgb,var(--loss) 12%,transparent);color:var(--loss);font-weight:600}
+.arena-msg[hidden]{display:none}
+@media(max-width:860px){.arena-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.arena-grid{grid-template-columns:1fr}}
