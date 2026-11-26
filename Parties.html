@@ -13,7 +13,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Russo+One&display=swap"></noscript>
 <script src="theme.js?v=3"></script>
 <link rel="stylesheet" href="site.css?v=3">
-<link rel="stylesheet" href="Parties.css?v=3">
+<link rel="stylesheet" href="Parties.css?v=4">
 
 </head>
 <body>
@@ -62,7 +62,7 @@
     </div>
   </div>
 </footer>
-<script src="joueurs.js?v=5"></script>
+<script src="joueurs.js?v=6"></script>
 <script>
 function teamTable(team,label,won,m){
   return '<div class="match-team'+(won?' is-winner':'')+'">'+
@@ -77,6 +77,7 @@ loadTournament().then(function(){
   document.getElementById("match-list").innerHTML=MATCHES.slice().reverse().map(function(m){
     return '<article class="match" id="partie-'+m.num+'">'+
       '<header class="match-head"><h2>Partie '+m.num+'</h2>'+
+        (m.duration?'<span class="match-time" title="Durée de la partie"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg>'+fmt(m.duration,0)+' min</span>':'')+
       '<div class="match-score" aria-label="Kills : équipe A '+m.killsA+', équipe B '+m.killsB+'"><span class="'+(m.winner==="A"?'w':'')+'">'+m.killsA+'</span><i>–</i><span class="'+(m.winner==="B"?'w':'')+'">'+m.killsB+'</span><small>kills</small></div>'+
       (m.mvp?'<p class="match-mvp">MVP <a href="Joueur.html?joueur='+encodeURIComponent(m.mvp.id)+'">'+escHtml(m.mvp.name)+'</a> <span>'+m.mvp.kills+'/'+m.mvp.deaths+'/'+m.mvp.assists+' · KDA '+fmt(m.mvp.kda)+'</span></p>':'')+
       '</header><div class="match-teams">'+teamTable(m.A,"Équipe A",m.winner==="A",m)+teamTable(m.B,"Équipe B",m.winner==="B",m)+'</div></article>';

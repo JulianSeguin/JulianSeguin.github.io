@@ -85,11 +85,20 @@ function rowsFromCsv(text){
   });
   return out;
 }
+/* Feuille 1 : A = Partie, F = Durée (min), G = Pseudo, H = Joueur */
 function pseudosFromCsv(text){
   var map={};
   parseCsv(text).forEach(function(c){
-    var pseudo=String(c[0]||"").trim(),name=String(c[1]||"").trim();
+    var pseudo=String(c[6]||"").trim(),name=String(c[7]||"").trim();
     if(pseudo&&name&&pseudo!=="Pseudo")map[name]=pseudo;
+  });
+  return map;
+}
+function durationsFromCsv(text){
+  var map={};
+  parseCsv(text).forEach(function(c){
+    var m=/(\d+)/.exec(String(c[0]||"")),min=parseFloat(String(c[5]||"").replace(",","."));
+    if(m&&min>0)map[+m[1]]=min;
   });
   return map;
 }
@@ -185,13 +194,15 @@ function loadTournament(){
   if(typeof fetch==="undefined"||location.protocol==="file:"){_tournamentPromise=Promise.resolve(local());return _tournamentPromise}
   _tournamentPromise=Promise.all([
     fetchText(sheetCsvUrl(SHEET_MATCHES,"A1:G2000"),5000),
-    fetchText(sheetCsvUrl(SHEET_PSEUDOS,"F1:G200"),5000).catch(function(){return ""})
+    fetchText(sheetCsvUrl(SHEET_PSEUDOS,"A1:H200"),5000).catch(function(){return ""})
   ]).then(function(res){
     var rows=rowsFromCsv(res[0]);
     if(rows.length<10)throw new Error("Sheet vide ou illisible");
     var pseudos=res[1]?pseudosFromCsv(res[1]):{};
     Object.keys(LOCAL_PSEUDOS).forEach(function(n){if(!pseudos[n])pseudos[n]=LOCAL_PSEUDOS[n]});
-    return applyTournament(buildTournament(rows,pseudos),"live");
+    var t=buildTournament(rows,pseudos),dur=res[1]?durationsFromCsv(res[1]):{};
+    t.matches.forEach(function(m){m.duration=dur[m.num]||null});
+    return applyTournament(t,"live");
   }).catch(function(err){
     if(window.console)console.info("Google Sheet indisponible, données locales utilisées :",err&&err.message);
     return local();

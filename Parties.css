@@ -31,3 +31,5 @@
   .match-teams{grid-template-columns:1fr}
   .match-mvp{margin-left:0;flex-basis:100%}
 }
+.match-time{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border:1px solid var(--bd);border-radius:999px;background:var(--row);color:var(--mu);font-size:.85rem;font-weight:700;font-variant-numeric:tabular-nums}
+.match-time svg{width:14px;height:14px}
